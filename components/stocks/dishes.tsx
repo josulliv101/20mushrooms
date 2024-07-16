@@ -3,6 +3,7 @@
 import { useActions, useUIState } from 'ai/rsc'
 import Image from 'next/image'
 import type { AI } from '@/lib/chat/actions'
+import { useEffect, useState } from 'react'
 
 export interface Dish {
   id: string
@@ -30,10 +31,10 @@ export function Dishes({ props: dishes }: { props: Dish[] }) {
             }}
           >
             <div
-              className={`w-full h-full absolute top-0 left-0 rounded-lg overflow-hidden`}
+              className={`w-full h-full absolute top-0 left-0 rounded-lg overflow-hidden animate-fade`}
             >
               <Image
-                className="group-hover/item:opacity-100 opacity-0 object-cover w-full h-full transition-opacity duration-500"
+                className="group-hover/item:opacity-0 opacity-100  object-cover w-full h-full transition-opacity duration-500"
                 width="220"
                 height="220"
                 src={dish.photoUrl}
