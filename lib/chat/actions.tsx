@@ -35,6 +35,8 @@ import { saveChat } from '@/app/actions'
 import { SpinnerMessage, UserMessage } from '@/components/stocks/message'
 import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
+import config from '@/lib/config'
+import { Dishes } from '@/components/stocks/dishes'
 
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
@@ -127,7 +129,7 @@ async function submitUserMessage(content: string) {
   let textNode: undefined | React.ReactNode
 
   const result = await streamUI({
-    model: openai('gpt-3.5-turbo'),
+    model: openai(config.modelAi),
     initial: <SpinnerMessage />,
     system: `\
     You are a stock trading conversation bot and you can help users buy stocks, step by step.
@@ -140,6 +142,7 @@ async function submitUserMessage(content: string) {
     If the user requests purchasing a stock, call \`show_stock_purchase_ui\` to show the purchase UI.
     If the user just wants the price, call \`show_stock_price\` to show the price.
     If you want to show trending stocks, call \`list_stocks\`.
+    If you want to show highly rated dishes, call \`list_dishes\`.
     If you want to show events, call \`get_events\`.
     If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
     
@@ -177,6 +180,74 @@ async function submitUserMessage(content: string) {
       return textNode
     },
     tools: {
+      listDishes: {
+        description: 'List the top 3 highest rated dishes.',
+        parameters: z.object({
+          dishes: z.array(
+            z.object({
+              id: z.string().describe('The internal id of the dish'),
+              name: z.string().describe('The name of the dish'),
+              price: z.number().describe('The price of the dish'),
+              location: z
+                .string()
+                .describe(
+                  'The city & state of the restaurant location  that serves the dish'
+                ),
+              placeName: z
+                .string()
+                .describe('The name of the restaurant that serves the dish')
+            })
+          )
+        }),
+        generate: async function* ({ dishes }) {
+          yield (
+            <BotCard>
+              <StocksSkeleton />
+            </BotCard>
+          )
+
+          await sleep(3000)
+
+          const toolCallId = nanoid()
+
+          aiState.done({
+            ...aiState.get(),
+            messages: [
+              ...aiState.get().messages,
+              {
+                id: nanoid(),
+                role: 'assistant',
+                content: [
+                  {
+                    type: 'tool-call',
+                    toolName: 'listDishes',
+                    toolCallId,
+                    args: { dishes }
+                  }
+                ]
+              },
+              {
+                id: nanoid(),
+                role: 'tool',
+                content: [
+                  {
+                    type: 'tool-result',
+                    toolName: 'listDishes',
+                    toolCallId,
+                    result: dishes
+                  }
+                ]
+              }
+            ]
+          })
+
+          return (
+            <BotCard>
+              <Dishes props={dishes} />
+            </BotCard>
+          )
+        }
+      },
       listStocks: {
         description: 'List three imaginary stocks that are trending.',
         parameters: z.object({
@@ -195,7 +266,7 @@ async function submitUserMessage(content: string) {
             </BotCard>
           )
 
-          await sleep(1000)
+          await sleep(5000)
 
           const toolCallId = nanoid()
 

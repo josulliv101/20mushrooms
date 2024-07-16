@@ -126,7 +126,7 @@ export function SpinnerMessage() {
       <div className="flex size-[36px] shrink-0 select-none items-center justify-center rounded-md border bg-primary text-primary-foreground shadow-sm">
         <IconAssistant />
       </div>
-      <div className="ml-4 h-[24px] flex flex-row items-center flex-1 space-y-2 overflow-hidden px-1">
+      <div className="ml-4 h-[36px] flex flex-row items-center flex-1 space-y-2 overflow-hidden px-1">
         {spinner}
       </div>
     </div>
