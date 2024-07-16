@@ -13,10 +13,11 @@ export const metadata = {
     ? new URL(`https://${process.env.VERCEL_URL}`)
     : undefined,
   title: {
-    default: 'Next.js AI Chatbot',
-    template: `%s - Next.js AI Chatbot`
+    default: '20 Mushrooms',
+    template: `%s - Discover the best dishes and restaurants in your area.`
   },
-  description: 'An AI-powered chatbot template built with Next.js and Vercel.',
+  description:
+    'Whether you are looking for a hidden gem or sharing your favorite finds, 20 Mushrooms makes it easy to explore and recommend top dishes to fellow food enthusiasts.',
   icons: {
     icon: '/favicon.ico',
     shortcut: '/favicon-16x16.png',
