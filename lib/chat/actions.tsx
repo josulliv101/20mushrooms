@@ -37,6 +37,9 @@ import { Chat, Message } from '@/lib/types'
 import { auth } from '@/auth'
 import config from '@/lib/config'
 import { Dishes } from '@/components/stocks/dishes'
+import { getData } from './places'
+
+const placeData = getData()
 
 async function confirmPurchase(symbol: string, price: number, amount: number) {
   'use server'
@@ -127,7 +130,7 @@ async function submitUserMessage(content: string) {
 
   let textStream: undefined | ReturnType<typeof createStreamableValue<string>>
   let textNode: undefined | React.ReactNode
-
+  console.log('data', JSON.stringify(placeData).slice(0, 100))
   const result = await streamUI({
     model: openai(config.modelAi),
     initial: <SpinnerMessage />,
@@ -142,10 +145,16 @@ async function submitUserMessage(content: string) {
     If the user requests purchasing a stock, call \`show_stock_purchase_ui\` to show the purchase UI.
     If the user just wants the price, call \`show_stock_price\` to show the price.
     If you want to show trending stocks, call \`list_stocks\`.
-    If you want to show highly rated dishes, call \`list_dishes\`.
+    If the user requests highly rated dishes, call \`list_dishes\`. They may ask something like to "list dishes" or "show dishes" or "get dishes" or "give me dishes" or "find dishes"
     If you want to show events, call \`get_events\`.
     If the user wants to sell stock, or complete another impossible task, respond that you are a demo and cannot do that.
     
+    When listings dishes, only use information in the json data below. The json data is located below between "START_JSON_DATA" text and "END_JSON_DATA" text
+
+    START_JSON_DATA
+    ${JSON.stringify(placeData)}
+    END_JSON_DATA
+
     Besides that, you can also chat with users and do some calculations if needed.`,
     messages: [
       ...aiState.get().messages.map((message: any) => ({
@@ -195,7 +204,8 @@ async function submitUserMessage(content: string) {
                 ),
               placeName: z
                 .string()
-                .describe('The name of the restaurant that serves the dish')
+                .describe('The name of the restaurant that serves the dish'),
+              photoUrl: z.string().describe('The path to the image of the dish')
             })
           )
         }),

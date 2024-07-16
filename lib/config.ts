@@ -3,7 +3,7 @@ const config = {
   logoUrl: '/cute-mushroom-blue.png',
   assistantUrl: '/carmen.png',
   assistantName: 'Carmen',
-  modelAi: 'gpt-3.5-turbo'
+  modelAi: 'gpt-4o'
 }
 
 export default config

@@ -19,7 +19,7 @@ export function ChatList({ messages, session, isShared }: ChatList) {
     <div className="relative mx-auto max-w-2xl px-4">
       {!isShared && !session ? (
         <>
-          <div className="group relative mb-4 flex items-start md:-ml-12">
+          <div className="group relative mb-4 flex_ hidden items-start md:-ml-12">
             <div className="bg-background flex size-[36px] shrink-0 select-none items-center justify-center rounded-md border shadow-sm">
               <ExclamationTriangleIcon />
             </div>
